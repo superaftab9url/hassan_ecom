@@ -3,221 +3,558 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teddy Vibe Store</title>
+  <title>HASSAN STORE | Official Store</title>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     :root {
-      --primary: #ff0055;
-      --bg: #fafafa;
-      --card-bg: #ffffff;
-      --text: #111111;
+      --bg: #0d0d0f;
+      --card-bg: #16161a;
+      --accent: #ff0055;
+      --accent-hover: #ff3377;
+      --text: #f1f1f1;
+      --text-muted: #9999a1;
+      --border: #2a2a32;
     }
-    body {
-      font-family: 'Arial Black', Impact, sans-serif;
-      background-color: var(--bg);
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
       color: var(--text);
+      line-height: 1.5;
     }
+
+    /* Header & Navigation */
     header {
-      background: #000;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-    .container {
-      max-width: 1100px;
-      margin: 20px auto;
-      padding: 0 15px;
-    }
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 25px;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 3px solid #000;
-      box-shadow: 5px 5px 0px #000;
-      padding: 15px;
-      border-radius: 8px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 13, 15, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 15px 5%;
       display: flex;
-      flex-direction: column;
       justify-content: space-between;
+      align-items: center;
     }
-    .card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border: 2px solid #000;
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #fff;
+      text-transform: uppercase;
     }
-    .card h3 {
-      margin: 10px 0 5px;
-      font-size: 1.1rem;
+
+    .brand span { color: var(--accent); }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
-    .card .price {
-      color: var(--primary);
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
-    button {
-      background: #000;
+
+    .cart-btn {
+      position: relative;
+      background: var(--accent);
       color: #fff;
       border: none;
-      padding: 10px;
-      font-weight: bold;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-weight: 600;
       cursor: pointer;
-      text-transform: uppercase;
-      border: 2px solid #000;
+      transition: 0.3s;
     }
-    button:hover {
-      background: var(--primary);
-      color: #000;
-    }
-    .cart-box {
-      margin-top: 40px;
+
+    .cart-btn:hover { background: var(--accent-hover); }
+
+    .cart-badge {
       background: #fff;
-      border: 3px solid #000;
-      padding: 20px;
-      box-shadow: 6px 6px 0px #000;
+      color: #000;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 0.8rem;
+      margin-left: 6px;
     }
-    input {
+
+    /* Hero Banner */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(180deg, rgba(255,0,85,0.08) 0%, rgba(13,13,15,0) 100%);
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .hero p { color: var(--text-muted); font-size: 1.1rem; }
+
+    /* Filters & Search */
+    .filter-bar {
+      max-width: 1200px;
+      margin: 0 auto 30px;
+      padding: 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px 15px 12px 40px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #fff;
+      outline: none;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .category-btns {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .cat-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .cat-btn.active {
+      background: #fff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--accent);
+    }
+
+    .product-img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      background: #202025;
+      cursor: pointer;
+    }
+
+    .product-info {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .product-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .add-btn {
+      margin-top: auto;
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .add-btn:hover { background: var(--accent); color: #fff; }
+
+    /* Side Cart Drawer */
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 380px;
+      height: 100%;
+      background: #111115;
+      border-left: 1px solid var(--border);
+      z-index: 200;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .cart-drawer.open { right: 0; }
+
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+
+    .cart-items { flex: 1; overflow-y: auto; }
+
+    .cart-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 15px;
+      background: var(--card-bg);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .cart-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+    .cart-item-info { flex: 1; }
+    .qty-btn { background: var(--border); color: #fff; border: none; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
+
+    .checkout-form input {
       width: 100%;
       padding: 10px;
-      margin: 8px 0;
-      box-sizing: border-box;
-      border: 2px solid #000;
+      margin-bottom: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: #fff;
+      border-radius: 6px;
     }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 300;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      border: 1px solid var(--border);
+    }
+
+    .overlay {
+      position: fixed;
+      top:0; left:0; width:100%; height:100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 150;
+    }
+
+    .overlay.open { display: block; }
   </style>
 </head>
 <body>
 
+  <!-- Navigation -->
   <header>
-    <h1>FRESH VIBES STORE</h1>
+    <div class="brand">TEDDY<span>FRESH</span></div>
+    <div class="header-controls">
+      <button class="cart-btn" onclick="toggleCart()">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="cart-badge" id="cartCount">0</span>
+      </button>
+    </div>
   </header>
 
-  <div class="container">
-    <h2>LATEST DROPS</h2>
-    <div id="products" class="product-grid">Products load ho rahe hain...</div>
+  <!-- Hero Banner -->
+  <section class="hero">
+    <h1>LATEST STREETWEAR DROPS</h1>
+    <p>100% Authentic Apparel Direct From Store</p>
+  </section>
 
-    <div class="cart-box">
-      <h2>CHECKOUT / ORDER NOW</h2>
-      <div id="cart-summary">Cart khali hai</div>
-      <br>
-      <input type="text" id="custName" placeholder="Full Name" required>
-      <input type="text" id="custPhone" placeholder="Phone Number" required>
-      <input type="text" id="custAddr" placeholder="Delivery Address" required>
-      <button id="orderBtn" style="width: 100%; margin-top: 10px;" onclick="placeOrder()">Place Order (COD)</button>
+  <!-- Filters & Search -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="searchInput" placeholder="Search 100+ products..." oninput="applyFilters()">
+    </div>
+    <div class="category-btns" id="categoryContainer">
+      <button class="cat-btn active" onclick="filterCategory('All')">All</button>
     </div>
   </div>
 
+  <!-- Products Container -->
+  <div class="product-grid" id="productGrid">
+    <p style="text-align: center; grid-column: 1/-1;">Loading Collection...</p>
+  </div>
+
+  <!-- Cart Drawer -->
+  <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 1.5rem;" onclick="toggleCart()"></i>
+    </div>
+    <div class="cart-items" id="cartItems">Cart is empty</div>
+    <div style="border-top: 1px solid var(--border); padding-top: 15px;">
+      <h3 style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+        <span>Total:</span>
+        <span id="cartTotal">Rs. 0</span>
+      </h3>
+      <div class="checkout-form">
+        <input type="text" id="cName" placeholder="Full Name" required>
+        <input type="text" id="cPhone" placeholder="Phone Number" required>
+        <input type="text" id="cAddress" placeholder="Complete Address" required>
+        <button class="add-btn" style="width: 100%; background: var(--accent); color: #fff;" id="orderBtn" onclick="submitOrder()">Place Order (COD)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Detail Modal -->
+  <div class="modal" id="productModal">
+    <div class="modal-content" id="modalBody"></div>
+  </div>
+
   <script>
-    // Aapka deployed Google Web App URL
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw5cV1o7MfmRlhXVWk75EwISdwJbIXUoe1cO7GWRhg9l2c0eNbzuvW1Pt-u5kJ8i9RgqQ/exec";
-
+    // Updated Google Apps Script Web App URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbxN6Xj4QK2uOVftYmRC9GLD8anxOOw0bnbbQQZ2ew--wrGssvQaoiaAv2diY_8uitfhNg/exec";
+    
+    let productsData = [];
     let cart = [];
-    let allProducts = [];
+    let selectedCategory = "All";
 
-    // Screen load hone par Google Sheet se products fetch karna
     window.onload = function() {
       fetchProducts();
     };
 
     function fetchProducts() {
-      fetch(WEB_APP_URL + "?action=getProducts")
-        .then(response => response.json())
-        .then(products => {
-          renderProducts(products);
+      fetch(API_URL + "?action=getProducts")
+        .then(res => res.json())
+        .then(data => {
+          productsData = data;
+          setupCategories();
+          renderProducts(productsData);
         })
-        .catch(error => {
-          console.error("Error fetching products:", error);
-          document.getElementById('products').innerHTML = '<p>Products load karne mein masla hua.</p>';
+        .catch(err => {
+          console.error(err);
+          document.getElementById("productGrid").innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Error loading products. Check Web App Deployment permissions.</p>";
         });
     }
 
-    function renderProducts(products) {
-      allProducts = products;
-      let html = '';
-      if(!products || products.length === 0) {
-        document.getElementById('products').innerHTML = '<p>Google Sheet mein koi product nahi mila.</p>';
+    function setupCategories() {
+      const categories = ["All", ...new Set(productsData.map(p => p.category))];
+      const container = document.getElementById("categoryContainer");
+      container.innerHTML = categories.map(cat => 
+        `<button class="cat-btn ${cat === 'All' ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>`
+      ).join("");
+    }
+
+    function renderProducts(items) {
+      const grid = document.getElementById("productGrid");
+      if(!items || items.length === 0) {
+        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No products found in Google Sheet.</p>";
         return;
       }
-      products.forEach(p => {
-        html += `
-          <div class="card">
-            <img src="${p.image}" alt="${p.name}">
-            <h3>${p.name}</h3>
-            <div class="price">Rs. ${p.price}</div>
-            <p style="font-family: sans-serif; font-size: 0.85rem;">${p.desc}</p>
-            <button onclick="addToCart('${p.id}')">Add To Cart</button>
+      grid.innerHTML = items.map(p => `
+        <div class="product-card">
+          <img src="${p.image}" class="product-img" onclick="openModal('${p.id}')" alt="${p.name}">
+          <div class="product-info">
+            <div class="product-title">${p.name}</div>
+            <div class="product-price">Rs. ${p.price}</div>
+            <button class="add-btn" onclick="addToCart('${p.id}')">Add to Cart</button>
           </div>
-        `;
+        </div>
+      `).join("");
+    }
+
+    function filterCategory(cat, btn) {
+      selectedCategory = cat;
+      document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+      if(btn) btn.classList.add("active");
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = productsData.filter(p => {
+        const matchesCat = selectedCategory === "All" || p.category === selectedCategory;
+        const matchesQuery = p.name.toLowerCase().includes(query);
+        return matchesCat && matchesQuery;
       });
-      document.getElementById('products').innerHTML = html;
+      renderProducts(filtered);
     }
 
     function addToCart(id) {
-      let prod = allProducts.find(p => p.id == id);
-      if(prod) {
-        cart.push(prod);
-        updateCartUI();
+      const prod = productsData.find(p => p.id == id);
+      const existing = cart.find(c => c.id == id);
+      if(existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({...prod, qty: 1});
       }
+      updateCartUI();
+      toggleCart(true);
     }
 
     function updateCartUI() {
+      const totalCount = cart.reduce((s, i) => s + i.qty, 0);
+      const totalPrice = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      document.getElementById("cartCount").innerText = totalCount;
+      document.getElementById("cartTotal").innerText = "Rs. " + totalPrice;
+
+      const itemsContainer = document.getElementById("cartItems");
       if(cart.length === 0) {
-        document.getElementById('cart-summary').innerText = 'Cart khali hai';
+        itemsContainer.innerHTML = "<p>Cart is empty</p>";
         return;
       }
-      let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
-      let itemsList = cart.map(i => i.name).join(', ');
-      document.getElementById('cart-summary').innerHTML = `
-        <strong>Items:</strong> ${itemsList} <br>
-        <strong>Total Amount:</strong> Rs. ${total}
-      `;
+
+      itemsContainer.innerHTML = cart.map(i => `
+        <div class="cart-item">
+          <img src="${i.image}">
+          <div class="cart-item-info">
+            <div style="font-size:0.9rem; font-weight:600;">${i.name}</div>
+            <div style="color:var(--accent);">Rs. ${i.price}</div>
+            <div style="margin-top:5px;">
+              <button class="qty-btn" onclick="changeQty('${i.id}', -1)">-</button>
+              <span style="margin: 0 8px;">${i.qty}</span>
+              <button class="qty-btn" onclick="changeQty('${i.id}', 1)">+</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
     }
 
-    function placeOrder() {
-      if(cart.length === 0) { alert('Cart khali hai!'); return; }
-      let name = document.getElementById('custName').value;
-      let phone = document.getElementById('custPhone').value;
-      let addr = document.getElementById('custAddr').value;
+    function changeQty(id, change) {
+      const item = cart.find(i => i.id == id);
+      if(item) {
+        item.qty += change;
+        if(item.qty <= 0) cart = cart.filter(i => i.id != id);
+      }
+      updateCartUI();
+    }
 
-      if(!name || !phone || !addr) { alert('Sari details fill karein!'); return; }
+    function toggleCart(open) {
+      const drawer = document.getElementById("cartDrawer");
+      const overlay = document.getElementById("overlay");
+      if(open === true) {
+        drawer.classList.add("open");
+        overlay.classList.add("open");
+      } else {
+        drawer.classList.toggle("open");
+        overlay.classList.toggle("open");
+      }
+    }
 
-      let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
-      let items = cart.map(i => i.name).join(', ');
+    function openModal(id) {
+      const p = productsData.find(item => item.id == id);
+      document.getElementById("modalBody").innerHTML = `
+        <img src="${p.image}" style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
+        <h2 style="margin-top:15px;">${p.name}</h2>
+        <h3 style="color:var(--accent); margin:10px 0;">Rs. ${p.price}</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem;">${p.desc || 'No description available.'}</p>
+        <button class="add-btn" style="width:100%; margin-top:20px; background:var(--accent); color:#fff;" onclick="addToCart('${p.id}'); closeModal();">Add to Cart</button>
+        <button class="add-btn" style="width:100%; margin-top:8px;" onclick="closeModal()">Close</button>
+      `;
+      document.getElementById("productModal").style.display = "flex";
+    }
 
-      let orderData = { name: name, phone: phone, address: addr, items: items, total: total };
+    function closeModal() {
+      document.getElementById("productModal").style.display = "none";
+    }
 
-      let orderBtn = document.getElementById('orderBtn');
-      orderBtn.disabled = true;
-      orderBtn.innerText = "Processing...";
+    function submitOrder() {
+      if(cart.length === 0) { alert("Cart empty hai!"); return; }
+      const name = document.getElementById("cName").value;
+      const phone = document.getElementById("cPhone").value;
+      const address = document.getElementById("cAddress").value;
 
-      fetch(WEB_APP_URL, {
+      if(!name || !phone || !address) { alert("Sari details enter karein!"); return; }
+
+      const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+      const itemsString = cart.map(i => `${i.name} (x${i.qty})`).join(", ");
+
+      const payload = { name, phone, address, items: itemsString, total };
+      const btn = document.getElementById("orderBtn");
+      btn.innerText = "Placing Order...";
+      btn.disabled = true;
+
+      fetch(API_URL, {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(orderData)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
       })
       .then(() => {
-        alert('Order Successfully Place ho gaya hai!');
+        alert("Order Success! Details saved to Google Sheet.");
         cart = [];
         updateCartUI();
-        document.getElementById('custName').value = '';
-        document.getElementById('custPhone').value = '';
-        document.getElementById('custAddr').value = '';
-        orderBtn.disabled = false;
-        orderBtn.innerText = "Place Order (COD)";
+        toggleCart(false);
+        document.getElementById("cName").value = "";
+        document.getElementById("cPhone").value = "";
+        document.getElementById("cAddress").value = "";
+        btn.innerText = "Place Order (COD)";
+        btn.disabled = false;
       })
-      .catch(error => {
-        console.error("Error placing order:", error);
-        alert('Order place karne mein masla hua, dobara koshish karein.');
-        orderBtn.disabled = false;
-        orderBtn.innerText = "Place Order (COD)";
+      .catch(err => {
+        alert("Error submitting order.");
+        btn.innerText = "Place Order (COD)";
+        btn.disabled = false;
       });
     }
   </script>
