@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HASSAN STORE | Official Store</title>
+  <title>HASSI FASHION COLLECTION | E-Commerce</title>
   <!-- Google Fonts & FontAwesome Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -37,7 +37,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(13, 13, 15, 0.9);
+      background: rgba(13, 13, 15, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       padding: 15px 5%;
@@ -88,12 +88,12 @@
     /* Hero Banner */
     .hero {
       text-align: center;
-      padding: 60px 20px;
+      padding: 50px 20px;
       background: linear-gradient(180deg, rgba(255,0,85,0.08) 0%, rgba(13,13,15,0) 100%);
     }
 
     .hero h1 {
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       font-weight: 800;
       margin-bottom: 10px;
       text-transform: uppercase;
@@ -165,7 +165,7 @@
       margin: 0 auto;
       padding: 0 20px 60px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 25px;
     }
 
@@ -186,7 +186,7 @@
 
     .product-img {
       width: 100%;
-      height: 260px;
+      height: 240px;
       object-fit: cover;
       background: #202025;
       cursor: pointer;
@@ -313,7 +313,7 @@
 
   <!-- Navigation -->
   <header>
-    <div class="brand">TEDDY<span>FRESH</span></div>
+    <div class="brand">HASSI<span>FASHION</span></div>
     <div class="header-controls">
       <button class="cart-btn" onclick="toggleCart()">
         <i class="fa-solid fa-cart-shopping"></i>
@@ -324,15 +324,15 @@
 
   <!-- Hero Banner -->
   <section class="hero">
-    <h1>LATEST STREETWEAR DROPS</h1>
-    <p>100% Authentic Apparel Direct From Store</p>
+    <h1>HASSI FASHION COLLECTION</h1>
+    <p>Exclusive Premium Apparel Direct From Store</p>
   </section>
 
   <!-- Filters & Search -->
   <div class="filter-bar">
     <div class="search-box">
       <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="searchInput" placeholder="Search 100+ products..." oninput="applyFilters()">
+      <input type="text" id="searchInput" placeholder="Search products..." oninput="applyFilters()">
     </div>
     <div class="category-btns" id="categoryContainer">
       <button class="cat-btn active" onclick="filterCategory('All')">All</button>
@@ -372,7 +372,6 @@
   </div>
 
   <script>
-    // Updated Google Apps Script Web App URL
     const API_URL = "https://script.google.com/macros/s/AKfycbxN6Xj4QK2uOVftYmRC9GLD8anxOOw0bnbbQQZ2ew--wrGssvQaoiaAv2diY_8uitfhNg/exec";
     
     let productsData = [];
@@ -387,13 +386,17 @@
       fetch(API_URL + "?action=getProducts")
         .then(res => res.json())
         .then(data => {
-          productsData = data;
+          // Clean product names if Google Sheet contains old brand names dynamically
+          productsData = data.map(p => ({
+            ...p,
+            name: p.name.replace(/Teddy Fresh|TF/gi, "Hassi Fashion")
+          }));
           setupCategories();
           renderProducts(productsData);
         })
         .catch(err => {
           console.error(err);
-          document.getElementById("productGrid").innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Error loading products. Check Web App Deployment permissions.</p>";
+          document.getElementById("productGrid").innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>Error loading products.</p>";
         });
     }
 
@@ -408,7 +411,7 @@
     function renderProducts(items) {
       const grid = document.getElementById("productGrid");
       if(!items || items.length === 0) {
-        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No products found in Google Sheet.</p>";
+        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No products found.</p>";
         return;
       }
       grid.innerHTML = items.map(p => `
