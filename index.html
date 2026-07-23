@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teddy Vibe Store</title>
+  <style>
+    :root {
+      --primary: #ff0055;
+      --bg: #fafafa;
+      --card-bg: #ffffff;
+      --text: #111111;
+    }
+    body {
+      font-family: 'Arial Black', Impact, sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+    }
+    header {
+      background: #000;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 25px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 3px solid #000;
+      box-shadow: 5px 5px 0px #000;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border: 2px solid #000;
+    }
+    .card h3 {
+      margin: 10px 0 5px;
+      font-size: 1.1rem;
+    }
+    .card .price {
+      color: var(--primary);
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      border: 2px solid #000;
+    }
+    button:hover {
+      background: var(--primary);
+      color: #000;
+    }
+    .cart-box {
+      margin-top: 40px;
+      background: #fff;
+      border: 3px solid #000;
+      padding: 20px;
+      box-shadow: 6px 6px 0px #000;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 2px solid #000;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>FRESH VIBES STORE</h1>
+  </header>
+
+  <div class="container">
+    <h2>LATEST DROPS</h2>
+    <div id="products" class="product-grid">Products load ho rahe hain...</div>
+
+    <div class="cart-box">
+      <h2>CHECKOUT / ORDER NOW</h2>
+      <div id="cart-summary">Cart khali hai</div>
+      <br>
+      <input type="text" id="custName" placeholder="Full Name" required>
+      <input type="text" id="custPhone" placeholder="Phone Number" required>
+      <input type="text" id="custAddr" placeholder="Delivery Address" required>
+      <button id="orderBtn" style="width: 100%; margin-top: 10px;" onclick="placeOrder()">Place Order (COD)</button>
+    </div>
+  </div>
+
+  <script>
+    // Aapka deployed Google Web App URL
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw5cV1o7MfmRlhXVWk75EwISdwJbIXUoe1cO7GWRhg9l2c0eNbzuvW1Pt-u5kJ8i9RgqQ/exec";
+
+    let cart = [];
+    let allProducts = [];
+
+    // Screen load hone par Google Sheet se products fetch karna
+    window.onload = function() {
+      fetchProducts();
+    };
+
+    function fetchProducts() {
+      fetch(WEB_APP_URL + "?action=getProducts")
+        .then(response => response.json())
+        .then(products => {
+          renderProducts(products);
+        })
+        .catch(error => {
+          console.error("Error fetching products:", error);
+          document.getElementById('products').innerHTML = '<p>Products load karne mein masla hua.</p>';
+        });
+    }
+
+    function renderProducts(products) {
+      allProducts = products;
+      let html = '';
+      if(!products || products.length === 0) {
+        document.getElementById('products').innerHTML = '<p>Google Sheet mein koi product nahi mila.</p>';
+        return;
+      }
+      products.forEach(p => {
+        html += `
+          <div class="card">
+            <img src="${p.image}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <div class="price">Rs. ${p.price}</div>
+            <p style="font-family: sans-serif; font-size: 0.85rem;">${p.desc}</p>
+            <button onclick="addToCart('${p.id}')">Add To Cart</button>
+          </div>
+        `;
+      });
+      document.getElementById('products').innerHTML = html;
+    }
+
+    function addToCart(id) {
+      let prod = allProducts.find(p => p.id == id);
+      if(prod) {
+        cart.push(prod);
+        updateCartUI();
+      }
+    }
+
+    function updateCartUI() {
+      if(cart.length === 0) {
+        document.getElementById('cart-summary').innerText = 'Cart khali hai';
+        return;
+      }
+      let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+      let itemsList = cart.map(i => i.name).join(', ');
+      document.getElementById('cart-summary').innerHTML = `
+        <strong>Items:</strong> ${itemsList} <br>
+        <strong>Total Amount:</strong> Rs. ${total}
+      `;
+    }
+
+    function placeOrder() {
+      if(cart.length === 0) { alert('Cart khali hai!'); return; }
+      let name = document.getElementById('custName').value;
+      let phone = document.getElementById('custPhone').value;
+      let addr = document.getElementById('custAddr').value;
+
+      if(!name || !phone || !addr) { alert('Sari details fill karein!'); return; }
+
+      let total = cart.reduce((sum, item) => sum + Number(item.price), 0);
+      let items = cart.map(i => i.name).join(', ');
+
+      let orderData = { name: name, phone: phone, address: addr, items: items, total: total };
+
+      let orderBtn = document.getElementById('orderBtn');
+      orderBtn.disabled = true;
+      orderBtn.innerText = "Processing...";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(orderData)
+      })
+      .then(() => {
+        alert('Order Successfully Place ho gaya hai!');
+        cart = [];
+        updateCartUI();
+        document.getElementById('custName').value = '';
+        document.getElementById('custPhone').value = '';
+        document.getElementById('custAddr').value = '';
+        orderBtn.disabled = false;
+        orderBtn.innerText = "Place Order (COD)";
+      })
+      .catch(error => {
+        console.error("Error placing order:", error);
+        alert('Order place karne mein masla hua, dobara koshish karein.');
+        orderBtn.disabled = false;
+        orderBtn.innerText = "Place Order (COD)";
+      });
+    }
+  </script>
+</body>
+</html>
