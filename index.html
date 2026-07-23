@@ -383,31 +383,59 @@
       fetchProducts();
     };
 
-    // Helper function to extract and clean image URLs dynamically
-    function getCleanImgUrl(prod) {
-      let rawImg = prod.image || prod.img || prod.imageUrl || prod.picture || '';
-      if (!rawImg) return 'https://via.placeholder.com/300x300?text=No+Image';
+    // Advanced Parser: Strips HTML tags & converts Google Drive share links to direct images
+    function parseImageUrl(rawInput) {
+      if (!rawInput) return 'https://via.placeholder.com/300x300?text=No+Image';
       
-      // Clean string quotes or extra HTML leftover tags
-      rawImg = String(rawImg).replace(/["'<>]/g, '').trim();
+      let str = String(rawInput);
       
-      // Extract HTTP url if concatenated with text
-      const urlMatch = rawImg.match(/https?:\/\/[^\s"]+/);
-      if (urlMatch) {
-        return urlMatch[0];
+      // 1. If HTML string is passed (e.g. <img src="..."/>), extract URL via Regex
+      const urlMatch = str.match(/https?:\/\/[^\s"'<>]+/i);
+      let cleanUrl = urlMatch ? urlMatch[0] : str.trim();
+
+      // 2. Convert Google Drive Links to Direct Displayable Image Links
+      if (cleanUrl.includes('drive.google.com')) {
+        let fileId = '';
+        const idMatch = cleanUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || cleanUrl.match(/id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) {
+          fileId = idMatch[1];
+          cleanUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+        }
       }
-      return rawImg;
+
+      return cleanUrl;
+    }
+
+    // Clean text by stripping HTML tags if present in Sheet text
+    function cleanText(rawText) {
+      if (!rawText) return '';
+      return String(rawText).replace(/<[^>]*>?/gm, '').trim();
     }
 
     function fetchProducts() {
       fetch(API_URL + "?action=getProducts")
         .then(res => res.json())
         .then(data => {
-          productsData = data.map(p => ({
-            ...p,
-            name: String(p.name || '').replace(/Teddy Fresh|TF/gi, "Hassi Fashion"),
-            cleanImage: getCleanImgUrl(p)
-          }));
+          productsData = data.map((p, idx) => {
+            // Normalize object keys (case-insensitive)
+            const normalized = {};
+            Object.keys(p).forEach(k => {
+              normalized[k.trim().toLowerCase()] = p[k];
+            });
+
+            const rawName = normalized.name || normalized.title || 'Product';
+            const rawImg = normalized.image || normalized.img || normalized.imageurl || normalized.picture || normalized.url || '';
+
+            return {
+              id: normalized.id || idx,
+              name: cleanText(rawName).replace(/Teddy Fresh|TF/gi, "Hassi Fashion"),
+              price: normalized.price || 0,
+              category: cleanText(normalized.category || 'General'),
+              desc: cleanText(normalized.description || normalized.desc || ''),
+              cleanImage: parseImageUrl(rawImg)
+            };
+          });
+
           setupCategories();
           renderProducts(productsData);
         })
@@ -449,6 +477,7 @@
         img.className = 'product-img';
         img.alt = p.name;
         img.onerror = function() {
+          this.onerror = null;
           this.src = 'https://via.placeholder.com/300x300?text=Image+Unavailable';
         };
         img.onclick = () => openModal(p.id);
