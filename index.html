@@ -190,6 +190,7 @@
       object-fit: cover;
       background: #202025;
       cursor: pointer;
+      display: block;
     }
 
     .product-info {
@@ -386,10 +387,9 @@
       fetch(API_URL + "?action=getProducts")
         .then(res => res.json())
         .then(data => {
-          // Clean product names if Google Sheet contains old brand names dynamically
           productsData = data.map(p => ({
             ...p,
-            name: p.name.replace(/Teddy Fresh|TF/gi, "Hassi Fashion")
+            name: String(p.name || '').replace(/Teddy Fresh|TF/gi, "Hassi Fashion")
           }));
           setupCategories();
           renderProducts(productsData);
@@ -414,16 +414,23 @@
         grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center;'>No products found.</p>";
         return;
       }
-      grid.innerHTML = items.map(p => `
-        <div class="product-card">
-          <img src="${p.image}" class="product-img" onclick="openModal('${p.id}')" alt="${p.name}">
-          <div class="product-info">
-            <div class="product-title">${p.name}</div>
-            <div class="product-price">Rs. ${p.price}</div>
-            <button class="add-btn" onclick="addToCart('${p.id}')">Add to Cart</button>
+
+      grid.innerHTML = items.map(p => {
+        const cleanName = String(p.name).replace(/"/g, '&quot;');
+        const cleanImg = String(p.image).trim();
+        const cleanId = String(p.id).trim();
+
+        return `
+          <div class="product-card">
+            <img src="${cleanImg}" class="product-img" onclick="openModal('${cleanId}')" alt="${cleanName}">
+            <div class="product-info">
+              <div class="product-title">${cleanName}</div>
+              <div class="product-price">Rs. ${p.price}</div>
+              <button class="add-btn" onclick="addToCart('${cleanId}')">Add to Cart</button>
+            </div>
           </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
     function filterCategory(cat, btn) {
@@ -437,15 +444,16 @@
       const query = document.getElementById("searchInput").value.toLowerCase();
       const filtered = productsData.filter(p => {
         const matchesCat = selectedCategory === "All" || p.category === selectedCategory;
-        const matchesQuery = p.name.toLowerCase().includes(query);
+        const matchesQuery = String(p.name).toLowerCase().includes(query);
         return matchesCat && matchesQuery;
       });
       renderProducts(filtered);
     }
 
     function addToCart(id) {
-      const prod = productsData.find(p => p.id == id);
-      const existing = cart.find(c => c.id == id);
+      const prod = productsData.find(p => String(p.id) === String(id));
+      if (!prod) return;
+      const existing = cart.find(c => String(c.id) === String(id));
       if(existing) {
         existing.qty += 1;
       } else {
@@ -484,10 +492,10 @@
     }
 
     function changeQty(id, change) {
-      const item = cart.find(i => i.id == id);
+      const item = cart.find(i => String(i.id) === String(id));
       if(item) {
         item.qty += change;
-        if(item.qty <= 0) cart = cart.filter(i => i.id != id);
+        if(item.qty <= 0) cart = cart.filter(i => String(i.id) !== String(id));
       }
       updateCartUI();
     }
@@ -505,7 +513,8 @@
     }
 
     function openModal(id) {
-      const p = productsData.find(item => item.id == id);
+      const p = productsData.find(item => String(item.id) === String(id));
+      if(!p) return;
       document.getElementById("modalBody").innerHTML = `
         <img src="${p.image}" style="width:100%; height:250px; object-fit:cover; border-radius:8px;">
         <h2 style="margin-top:15px;">${p.name}</h2>
