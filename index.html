@@ -383,13 +383,30 @@
       fetchProducts();
     };
 
+    // Helper function to extract and clean image URLs dynamically
+    function getCleanImgUrl(prod) {
+      let rawImg = prod.image || prod.img || prod.imageUrl || prod.picture || '';
+      if (!rawImg) return 'https://via.placeholder.com/300x300?text=No+Image';
+      
+      // Clean string quotes or extra HTML leftover tags
+      rawImg = String(rawImg).replace(/["'<>]/g, '').trim();
+      
+      // Extract HTTP url if concatenated with text
+      const urlMatch = rawImg.match(/https?:\/\/[^\s"]+/);
+      if (urlMatch) {
+        return urlMatch[0];
+      }
+      return rawImg;
+    }
+
     function fetchProducts() {
       fetch(API_URL + "?action=getProducts")
         .then(res => res.json())
         .then(data => {
           productsData = data.map(p => ({
             ...p,
-            name: String(p.name || '').replace(/Teddy Fresh|TF/gi, "Hassi Fashion")
+            name: String(p.name || '').replace(/Teddy Fresh|TF/gi, "Hassi Fashion"),
+            cleanImage: getCleanImgUrl(p)
           }));
           setupCategories();
           renderProducts(productsData);
@@ -401,7 +418,7 @@
     }
 
     function setupCategories() {
-      const categories = ["All", ...new Set(productsData.map(p => p.category))];
+      const categories = ["All", ...new Set(productsData.map(p => p.category).filter(Boolean))];
       const container = document.getElementById("categoryContainer");
       container.innerHTML = "";
       
@@ -414,7 +431,6 @@
       });
     }
 
-    /* SAFE DOM RENDERING (Fixes extra code appearing below images) */
     function renderProducts(items) {
       const grid = document.getElementById("productGrid");
       grid.innerHTML = "";
@@ -429,9 +445,12 @@
         card.className = 'product-card';
 
         const img = document.createElement('img');
-        img.src = p.image || '';
+        img.src = p.cleanImage;
         img.className = 'product-img';
         img.alt = p.name;
+        img.onerror = function() {
+          this.src = 'https://via.placeholder.com/300x300?text=Image+Unavailable';
+        };
         img.onclick = () => openModal(p.id);
 
         const info = document.createElement('div');
@@ -510,7 +529,7 @@
         item.className = 'cart-item';
 
         item.innerHTML = `
-          <img src="${i.image}">
+          <img src="${i.cleanImage}">
           <div class="cart-item-info">
             <div style="font-size:0.9rem; font-weight:600;">${i.name}</div>
             <div style="color:var(--accent);">Rs. ${i.price}</div>
@@ -553,7 +572,7 @@
       modalBody.innerHTML = "";
 
       const img = document.createElement('img');
-      img.src = p.image;
+      img.src = p.cleanImage;
       img.style.cssText = "width:100%; height:250px; object-fit:cover; border-radius:8px;";
 
       const title = document.createElement('h2');
